@@ -1,0 +1,37 @@
+{
+  "name": "diamondschools-teacher",
+  "version": "1.0.0",
+  "description": "A comprehensive teacher dashboard for Diamond Schools",
+  "main": "server.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Chisom-Joseph/diamondschools-teacher.git"
+  },
+  "keywords": [
+    "School",
+    "diamond",
+    "dashboard",
+    "admin",
+    "template",
+    "website",
+    "ejs",
+    "nodejs",
+    "js",
+    "html",
+    "css",
+    "theme",
+    "aceternityui",
+    "shadcnui",
+    "tailwindcss",
+    "teacher"
+  ],
+  "author": "Smikedigital limited",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/Chisom-Joseph/diamondschools-teacher/issues"
+  },
+  "homepage": "https://github.com/Chisom-Joseph/diamondschools-teacher#readme"
+}
