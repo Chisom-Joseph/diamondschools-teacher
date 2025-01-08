@@ -9,11 +9,12 @@ const SequelizeStore = require("connect-session-sequelize")(session.Store);
 const flash = require("connect-flash");
 const cookieParser = require("cookie-parser");
 
-const sessionStore = new SequelizeStore({
-  db: db.sequelize,
-});
-
-sessionStore.sync();
+const sessionStore =
+  process.env.NODE_ENV === "production"
+    ? new SequelizeStore({
+        db: db.sequelize,
+      })
+    : new session.MemoryStore();
 
 app.use(
   session({
