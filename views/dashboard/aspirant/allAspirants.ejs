@@ -1,0 +1,84 @@
+<%- include("../../partials/header") %>
+<main class="content">
+  <div class="container-fluid p-0">
+
+    <h1 class="h3 mb-3">All Aspirants</h1>
+
+    <div class="row">
+      <div class="col-12 col-xl-12">
+        <div class="card">
+          <div class="card-header">
+            <h5 class="card-title">Striped Rows</h5>
+          </div>
+          <div class="card-body">
+            <table id="example" class="datatable" style="width:100%">
+              <thead>
+                <tr>
+                  <th>#</th>
+                  <th>Full Name</th>
+                  <th>Class</th>
+                  <th>Reg Number</th>
+                  <th>Gender</th>
+                  <th>Guardian</th>
+                </tr>
+              </thead>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</main>
+
+<script src="/DataTables/datatables.min.js"></script>
+<script>
+  document.addEventListener('DOMContentLoaded', function() {
+    new DataTable('#example', {
+      serverSide: true,
+      ajax: '/api/get-aspirants',
+      columns: [{
+          data: 'profileImageUrl', // Column containing the image URL
+          render: (data, type, row) => {
+            if (type === 'display' && data) {
+              return `<img src="${data}" width="32" height="32" class="rounded-circle my-n1" />`;
+            }
+            return '<img src="/img/profileImage/default.png" width="32" height="32" class="rounded-circle my-n1" />';
+          },
+        },
+        {
+          data: null,
+          render: (data, type, row) => {
+            const fullName = [row.firstName, row.middleName, row.lastName]
+              .filter(name => name)
+              .join(' ');
+            return fullName ? `<a href="/dashboard/aspirant/${row.id}">${fullName}</a>` : 'No Name';
+          },
+        },
+        {
+          data: "class",
+          render: (data, type, row) => {
+            return classItem = data.name || "No class"
+          }
+        },
+        {
+          data: 'examinationNumber'
+        },
+        {
+          data: "gender"
+        },
+        {
+          data: "guardian",
+          render: (data, type, row) => {
+            const fullName = [data.firstName, data.middleName, data.lastName]
+              .filter(name => name)
+              .join(' ');
+            return fullName ? `<a href="/dashboard/guardian/${data.id}">${fullName}</a>` : 'No Name';
+          }
+        }
+      ],
+    });
+  });
+</script>
+
+<%- include("../../partials/footer") %>
