@@ -1,0 +1,61 @@
+<%- include("../../partials/header") %>
+<main class="content">
+  <div class="container-fluid p-0">
+
+    <h1 class="h3 mb-3">All Guardians</h1>
+
+    <div class="row">
+      <div class="col-12 col-xl-12">
+        <div class="card">
+          <div class="card-header">
+            <h5 class="card-title">Striped Rows</h5>
+          </div>
+          <div class="card-body">
+            <table id="example" class="datatable" style="width:100%">
+              <thead>
+                <tr>
+                  <th>Full Name</th>
+                  <th>Email</th>
+                  <th>Phone Number</th>
+                  <th>Address</th>
+                </tr>
+              </thead>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</main>
+
+<script src="/DataTables/datatables.min.js"></script>
+<script>
+  document.addEventListener('DOMContentLoaded', function() {
+    new DataTable('#example', {
+      serverSide: true,
+      ajax: '/api/get-guardians',
+      columns: [{
+          data: null,
+          render: (data, type, row) => {
+            const fullName = [row.firstName, row.middleName, row.lastName]
+              .filter(name => name)
+              .join(' ');
+            return fullName ? `<a href="/dashboard/guardian/${row.id}">${fullName}</a>` : 'No Name';
+          },
+        },
+        {
+          data: 'email'
+        },
+        {
+          data: 'phoneNumber'
+        },
+        {
+          data: 'address'
+        },
+      ],
+    });
+  });
+</script>
+
+<%- include("../../partials/footer") %>
