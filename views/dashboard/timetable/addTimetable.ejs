@@ -1,0 +1,99 @@
+<%- include("../../partials/header") %>
+<main class="content">
+  <div class="container-fluid p-0">
+
+    <div class="mb-3">
+      <h1 class="h3 d-inline align-middle">Add Timetable</h1><a class="badge bg-primary ms-2" href="/dashboard/all-timetables">All Timetables <i class="fas fa-fw fa-external-link-alt"></i></a>
+    </div>
+
+    <div class="row">
+      <div class="col-md-12">
+        <div class="card">
+          <div class="card-header">
+            <h5 class="card-title">Timetable Registration Form</h5>
+          </div>
+          <div class="card-body">
+            <form method="POST" action="?action=add" enctype="multipart/form-data">
+              <% if(alert.status === "error") { %>
+              <div class="alert alert-danger alert-dismissible" role="alert">
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                <div class="alert-message">
+                  <strong>Error!</strong> <%- alert.message %>
+                </div>
+              </div>
+              <% } %>
+              <% if(alert.status === "success") { %>
+              <div class="alert alert-success alert-dismissible" role="alert">
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                <div class="alert-message pr-5">
+                  <strong>Sucess!</strong> <%- alert.message %>
+                </div>
+              </div>
+              <% } %>
+              <!-- Personal Information -->
+              <h4 class="mt-3">Timetable Information</h4>
+              <div class="row">
+                <div class="mb-3 col-md-6">
+                  <label class="form-label" for="class">Class</label>
+                  <select id="class" class="form-select" name="class" <%= classes.length > 0 ? "" : "disabled" %>>
+                    <option selected disabled hidden>Choose Class</option>
+                    <% if(classes.length > 0){ %>
+                    <% classes.forEach(classItem => { %>
+                    <option value="<%= classItem.id %>" <%= form.classItem === classItem.name ? "selected" : "" %>><%= classItem.name %></option>
+                    <% }) %>
+                    <% } else { %>
+                    <option selected disabled hidden>No Class Found</option>
+                    <% } %>
+                  </select>
+                </div>
+                <div class="mb-3 col-md-6">
+                  <label class="form-label" for="day">Day</label>
+                  <select id="day" class="form-select" name="day" <%= days.length > 0 ? "" : "disabled" %>>
+                    <option selected disabled hidden>Choose Day</option>
+                    <% if(days.length > 0){ %>
+                    <% days.forEach(day => { %>
+                    <option value="<%= day %>" <%= form.day === day ? "selected" : "" %>><%= day %></option>
+                    <% }) %>
+                    <% } else { %>
+                    <option selected disabled hidden>No Day Found</option>
+                    <% } %>
+                  </select>
+                </div>
+                <div class="mb-3 col-md-6">
+                  <label class="form-label" for="profilePhoto">Profile Photo</label>
+                  <input type="file" class="form-control" id="profilePhoto" placeholder="Select Profile Photo" name="profilePhoto" accept="png,jpg,jpeg">
+                </div>
+                <div class="mb-3 col-md-6">
+                  <label class="form-label" for="gender">Gender</label>
+                  <select class="form-control" id="gender" name="gender" value="<%= form.gender %>">
+                    <option selected disabled hidden>Select Gender</option>
+                    <option value="male" <%= form.gender === "male" ? "selected" : "" %>>Male</option>
+                    <option value="female" <%= form.gender === "female" ? "selected" : "" %>>Female</option>
+                    <option value="other" <%= form.gender === "other" ? "selected" : "" %>>Other</option>
+                  </select>
+                </div>
+                <div class="mb-3 col-md-12">
+                  <label class="form-label" for="address">Address</label>
+                  <textarea id="address" class="form-control" name="address" placeholder="Your Present Address"><%= form.address %></textarea>
+                </div>
+              </div>
+
+              <!-- Submit Button -->
+              <button type="submit" class="btn btn-primary">Submit</button>
+            </form>
+
+          </div>
+        </div>
+      </div>
+    </div>
+
+
+  </div>
+</main>
+
+<script>
+  const form = JSON.parse('<%- JSON.stringify(form) %>');
+  const states = JSON.parse(`<%- JSON.stringify(states) %>`);
+</script>
+
+<%- include("../../partials/footer") %>
