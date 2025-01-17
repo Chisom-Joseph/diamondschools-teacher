@@ -103,6 +103,7 @@ router.get("/guardian/:id", async (req, res) => {
   });
 });
 
+// Timetable
 router.get("/add-timetable", async (req, res) => {
   const status = req.flash("status")[0] || 200;
   res.status(status).render("dashboard/timetable/addTimetable.ejs", {
@@ -113,5 +114,22 @@ router.get("/add-timetable", async (req, res) => {
     states: "",
   });
 });
+
+// Subject
+router.get("/all-subjects", async (req, res) => {
+  const status = req.flash("status")[0] || 200;
+  res.status(status).render("dashboard/subject/allSubjects.ejs");
+});
+router.get("/subject", async (req, res) => {
+  const status = req.flash("status")[0] || 200;
+  res.status(status).render("dashboard/subject/subject.ejs", {
+    alert: req.flash("alert")[0] || "",
+    form: req.flash("form")[0] || "",
+    classes: (await require("../utils/getClasses")()) || "",
+    formSection: req.flash("formSection")[0] || "",
+    subjects: await require("../utils/getSubjects")(),
+  });
+});
+router.post("/subject", require("../controllers/dashboard/subject"));
 
 module.exports = router;
