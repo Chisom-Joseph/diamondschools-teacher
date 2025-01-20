@@ -104,16 +104,18 @@ router.get("/guardian/:id", async (req, res) => {
 });
 
 // Timetable
-router.get("/add-timetable", async (req, res) => {
+router.get("/timetable", async (req, res) => {
+  const { Timetable } = require("../models");
   const status = req.flash("status")[0] || 200;
-  res.status(status).render("dashboard/timetable/addTimetable.ejs", {
+  res.status(status).render("dashboard/timetable/timetable.ejs", {
     alert: req.flash("alert")[0] || "",
     form: req.flash("form")[0] || "",
-    classes: (await require("../utils/getClasses")()) || "",
     days: (await require("../utils/getDays")()) || "",
-    states: "",
+    subjects: await require("../utils/getSubjects")(),
+    timetables: await require("../utils/getTimetables")(),
   });
 });
+router.post("/timetable", require("../controllers/dashboard/timetable"));
 
 // Subject
 router.get("/all-subjects", async (req, res) => {
