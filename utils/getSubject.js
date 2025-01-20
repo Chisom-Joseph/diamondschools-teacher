@@ -24,7 +24,6 @@ module.exports = async (id) => {
       subject.class = subject.Class.dataValues;
     }
     delete subject.Class;
-    delete subject.ClassId;
 
     console.log(await subject);
     return subject;
