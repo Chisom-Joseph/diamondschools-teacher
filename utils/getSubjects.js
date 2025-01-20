@@ -28,7 +28,15 @@ module.exports = async () => {
     );
 
     console.log(await subjects);
-    return subjects;
+    return [
+      {
+        id: "break",
+        name: "Break",
+        shortName: "Break",
+        class: {},
+      },
+      ...(await subjects),
+    ];
   } catch (error) {
     console.log(error);
     return [];
