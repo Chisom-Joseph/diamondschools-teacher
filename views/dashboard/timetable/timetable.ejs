@@ -1,0 +1,331 @@
+<%- include("../../partials/header") %>
+<main class="content">
+  <div class="container-fluid p-0">
+
+    <h1 class="h3 mb-3">Manage Timetables</h1>
+
+    <div class="row">
+      <!-- Timetable Management Card -->
+      <div class="col-12">
+        <div class="card">
+          <div class="card-header">
+            <h5 class="card-title mb-0">Timetable Management</h5>
+          </div>
+          <div class="card-body">
+            <!-- Add New Timetable Form -->
+            <h6 class="mb-3">Add Timetable</h6>
+            <form method="POST" action="?action=add">
+              <% if(alert.section === "add" && alert.status === "error") { %>
+              <div class="alert alert-danger alert-dismissible" role="alert">
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                <div class="alert-message">
+                  <strong>Error!</strong> <%- alert.message %>
+                </div>
+              </div>
+              <% } %>
+              <% if(alert.section === "add" && alert.status === "success") { %>
+              <div class="alert alert-success alert-dismissible" role="alert">
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                <div class="alert-message pr-5">
+                  <strong>Sucess!</strong> <%- alert.message %>
+                </div>
+              </div>
+              <% } %>
+              <!-- Personal Information -->
+              <h4 class="mt-3">Timetable Information</h4>
+              <div class="row">
+                <div class="mb-3 col-md-6">
+                  <label class="form-label" for="subject">Subject</label>
+                  <select class="form-control" id="subject" name="subject" <%= subjects.length <= 0 ? "disabled" : "" %>>
+                    <% if(subjects.length > 0) { %>
+                    <option disabled selected hidden>Select Subject</option>
+                    <% subjects.map((subject) => { %>
+                    <option value="<%= subject.id %>" <%- form.subject === subject.id ? "selected" : "" %>><%= subject.name %> <% if(Object.keys(subject.class).length > 0) { %>(<%= subject.class.name %>)<% } %></option>
+                    <% }) %>
+                    <% } else { %>
+                    <option disabled selected hidden>No Subjects found</option>
+                    <% } %>
+                  </select>
+                </div>
+                <div class="mb-3 col-md-6">
+                  <p>Day</p>
+                  <div class="d-flex gap-2 flex-wrap">
+                    <label class="form-check">
+                      <input class="form-check-input" type="checkbox" id="check-all" value="all">
+                      <span class="form-check-label">All</span>
+                    </label>
+
+                    <% if (days.length > 0) { %>
+                    <% days.forEach(day => { %>
+                    <label class="form-check">
+                      <input class="form-check-input day-checkbox" type="checkbox" name="day" value="<%= day %>" <%= (form.day === day || (Array.isArray(form.day) && form.day.includes(day))) ? "checked" : "" %>>
+                      <span class="form-check-label"><%= day %></span>
+                    </label>
+                    <% }) %>
+                    <% } else { %>
+                    <span class="form-check-label">
+                      No days available. Please add options.
+                    </span>
+                    <% } %>
+                  </div>
+                </div>
+                <div class="mb-3 col-md-6">
+                  <label class="form-label" for="timeFrom">Time (Rrom)</label>
+                  <input type="time" id="timeFrom" class="form-select" name="timeFrom" value="<%= form.timeFrom %>">
+                </div>
+                <div class="mb-3 col-md-6">
+                  <label class="form-label" for="timeTo">Time (To)</label>
+                  <input type="time" id="timeTo" class="form-select" name="timeTo" value="<%= form.timeTo %>">
+                </div>
+              </div>
+
+              <!-- Submit Button -->
+              <button type="submit" class="btn btn-primary">Submit</button>
+            </form>
+
+            <hr class="my-4" />
+
+            <!-- Timetable List -->
+            <h6 class="mb-3">Timetables</h6>
+            <% if(alert.section === "update" && alert.status === "error") { %>
+            <div class="alert alert-danger alert-dismissible" role="alert">
+              <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+              <div class="alert-message">
+                <strong>Error!</strong> <%- alert.message %>
+              </div>
+            </div>
+            <% } %>
+            <% if(alert.section === "update" && alert.status === "success") { %>
+            <div class="alert alert-success alert-dismissible" role="alert">
+              <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+              <div class="alert-message pr-5">
+                <strong>Sucess!</strong> <%- alert.message %>
+              </div>
+            </div>
+            <% } %>
+            <div class="table-responsive">
+              <table id="timetableTable" class="table table-bordered table-striped">
+                <thead class="table-dark">
+                  <tr>
+                    <th>Day</th>
+                    <th>Time</th>
+                    <th>Subject</th>
+                    <th>Actions</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <% if (timetables.length > 0) { %>
+                  <% timetables.forEach((timetable) => { %>
+                  <tr>
+                    <td><%= timetable.day %></td>
+                    <td><%= timetable.time %></td>
+                    <td><%= timetable.subject === "break" ? "break" : `${timetable.subject.shortName} (${timetable.class?.name})` %></td>
+                    <td>
+                      <button class="btn btn-sm btn-warning edit-btn" data-id="<%= timetable.id %>" data-day="<%= timetable.day %>" data-time="<%= timetable.time %>" data-timeFrom="<%= timetable.time.split(' - ')[0].trim() %>" data-timeTo="<%= timetable.time.split(' - ')[1].trim() %>" data-subject="<%= timetable.subject.id %>" data-bs-toggle="modal" data-bs-target="#editTimetableModal">
+                        Edit
+                      </button>
+                      <button class="btn btn-sm btn-danger delete-btn" data-id="<%= timetable.id %>" data-bs-toggle="modal" data-bs-target="#deleteTimetableModal">
+                        Delete
+                      </button>
+                    </td>
+                  </tr>
+                  <% }); %>
+                  <% } else { %>
+                  <tr>
+                    <td colspan="4" class="text-center">No timetables found.</td>
+                    <td style="display:none;"></td>
+                    <td style="display:none;"></td>
+                    <td style="display:none;"></td>
+                  </tr>
+                  <% } %>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Edit Modal -->
+    <div class="modal fade" id="editTimetableModal" tabindex="-1" aria-hidden="true">
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title">Edit Timetable</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+          </div>
+          <form id="editTimetableForm" method="POST">
+            <div class="modal-body">
+              <input type="hidden" id="editId" name="id" />
+              <div class="mb-3">
+                <label for="editDay" class="form-label">Day</label>
+                <select class="form-control" id="editDay" name="day" <%= days.length <= 0 ? "disabled" : "" %>>
+                  <% if(days.length > 0) { %>
+                  <option disabled selected hidden>Select Day</option>
+                  <% days.map((day) => { %>
+                  <option value="<%= day %>" <%- form.day === day ? "selected" : "" %>><%= day %> </option>
+                  <% }) %>
+                  <% } else { %>
+                  <option disabled selected hidden>No Days found</option>
+                  <% } %>
+                </select>
+              </div>
+              <div class="mb-3">
+                <label for="editTimeFrom" class="form-label">Time From</label>
+                <input type="time" class="form-control" id="editTimeFrom" name="timeFrom" />
+              </div>
+              <div class="mb-3">
+                <label for="editTimeTo" class="form-label">Time To</label>
+                <input type="time" class="form-control" id="editTimeTo" name="timeTo" />
+              </div>
+              <div class="mb-3">
+                <label for="editSubject" class="form-label">Subject</label>
+                <select class="form-control" id="editSubject" name="subject" <%= subjects.length <= 0 ? "disabled" : "" %>>
+                  <% if(subjects.length > 0) { %>
+                  <option disabled selected hidden>Select Subject</option>
+                  <% subjects.map((subject) => { %>
+                  <option value="<%= subject.id %>" <%- form.subject === subject.id ? "selected" : "" %>><%= subject.name %> <% if(Object.keys(subject.class).length > 0) { %>(<%= subject.class.name %>)<% } %></option>
+                  <% }) %>
+                  <% } else { %>
+                  <option disabled selected hidden>No Subjects found</option>
+                  <% } %>
+                </select>
+              </div>
+            </div>
+            <div class="modal-footer">
+              <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+              <button type="submit" class="btn btn-primary">Save changes</button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+
+
+    <!-- Delete Modal -->
+    <div class="modal fade" id="deleteTimetableModal" tabindex="-1" aria-labelledby="deleteTimetableModalLabel" aria-hidden="true">
+      <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title" id="deleteTimetableModalLabel">Delete Timetable</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+          </div>
+          <div class="modal-body">
+            <p>Are you sure you want to delete this timetable?</p>
+            <form id="deleteTimetableForm" method="POST">
+              <input type="hidden" id="deleteId" name="id" />
+              <button type="submit" class="btn btn-danger">Delete</button>
+              <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+            </form>
+          </div>
+        </div>
+      </div>
+    </div>
+
+
+
+  </div>
+</main>
+
+<!-- Include DataTables Script -->
+<script src="/DataTables/datatables.min.js"></script>
+
+<script>
+  document.addEventListener('DOMContentLoaded', () => {
+    const checkAll = document.getElementById('check-all');
+    const dayCheckboxes = document.querySelectorAll('.day-checkbox');
+
+    checkAll.addEventListener('change', () => {
+      const isChecked = checkAll.checked;
+
+      // Check or uncheck all day checkboxes
+      dayCheckboxes.forEach(checkbox => {
+        checkbox.checked = isChecked;
+      });
+    });
+
+    // Update "All" checkbox if any day checkbox is manually changed
+    dayCheckboxes.forEach(checkbox => {
+      checkbox.addEventListener('change', () => {
+        checkAll.checked = Array.from(dayCheckboxes).every(cb => cb.checked);
+      });
+    });
+  });
+
+  // Initialize DataTables
+  document.addEventListener('DOMContentLoaded', function() {
+    new DataTable('#timetableTable', {
+      paging: true,
+      searching: true,
+      info: true
+    });
+  });
+
+  document.addEventListener("DOMContentLoaded", () => {
+    // Function to convert 12-hour time to 24-hour format
+    const convertTo24HourFormat = (time12h) => {
+      if (!time12h || !time12h.includes(" ")) return ""; // Ensure time format is valid and contains AM/PM
+
+      const [time, modifier] = time12h.split(" "); // Split into time and AM/PM
+      let [hours, minutes] = time.split(":"); // Split hours and minutes
+
+      // Convert hours to a number for manipulation
+      hours = parseInt(hours, 10);
+
+      // Convert hours to 24-hour format based on AM/PM
+      if (modifier === "PM" && hours !== 12) {
+        hours += 12;
+      } else if (modifier === "AM" && hours === 12) {
+        hours = 0;
+      }
+
+      // Convert back to string and pad hours if needed
+      return `${String(hours).padStart(2, "0")}:${minutes}`;
+    };
+
+
+    // Handle Edit Button Click
+    document.querySelectorAll(".edit-btn").forEach((button) => {
+      button.addEventListener("click", () => {
+        const id = button.getAttribute("data-id");
+        const day = button.getAttribute("data-day");
+        const time = button.getAttribute("data-time");
+        const subject = button.getAttribute("data-subject");
+
+        // Parse time to extract 'timeFrom' and 'timeTo'
+        const [timeFrom, timeTo] = time ? time.split(" - ").map((t) => t.trim()) : ["", ""];
+
+        // Populate edit form fields
+        document.getElementById("editTimetableForm").action = `?action=update`;
+        document.getElementById("editId").value = id;
+        // Set the value of the select menu for the day
+        const daySelect = document.getElementById("editDay");
+        if (daySelect) {
+          Array.from(daySelect.options).forEach((option) => {
+            option.selected = option.value.toLowerCase() === day.toLowerCase();
+          });
+        }
+        document.getElementById("editTimeFrom").value = convertTo24HourFormat(timeFrom) || "";
+        document.getElementById("editTimeTo").value = convertTo24HourFormat(timeTo) || "";
+        // Set the value of the subject select menu
+        const subjectSelect = document.getElementById("editSubject");
+        if (subjectSelect) {
+          Array.from(subjectSelect.options).forEach((option) => {
+            option.selected = option.value === subject;
+          });
+        }
+      });
+    });
+
+    // Handle Delete Button Click
+    document.querySelectorAll(".delete-btn").forEach((button) => {
+      button.addEventListener("click", () => {
+        const id = button.getAttribute("data-id");
+
+        document.getElementById("deleteTimetableForm").action = `?action=delete`;
+        document.getElementById("deleteId").value = id;
+      });
+    });
+  });
+</script>
+<%- include("../../partials/footer") %>
