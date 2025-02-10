@@ -1,5 +1,5 @@
 module.exports = (sequelize, DataTypes) => {
-  const Subject = sequelize.define("Subject", {
+  const AttemptedSubject = sequelize.define("AttemptedSubject", {
     id: {
       type: DataTypes.UUID,
       defaultValue: DataTypes.UUIDV4,
@@ -9,38 +9,33 @@ module.exports = (sequelize, DataTypes) => {
         notEmpty: true,
       },
     },
-    name: {
-      type: DataTypes.STRING,
-      allowNull: false,
-      validate: {
-        notEmpty: true,
-      },
-    },
-    shortName: {
-      type: DataTypes.STRING,
-      allowNull: false,
-      validate: {
-        notEmpty: true,
-      },
-    },
-    instructions: {
-      type: DataTypes.STRING,
-      allowNull: true,
-      validate: {
-        notEmpty: true,
-      },
-    },
-    duration: {
+    totalQuestions: {
       type: DataTypes.FLOAT,
-      defaultValue: 30,
-      allowNull: true,
+      defaultValue: 0,
+      allowNull: false,
       validate: {
         notEmpty: true,
       },
     },
-    active: {
-      type: DataTypes.BOOLEAN,
-      defaultValue: false,
+    totalAnswered: {
+      type: DataTypes.FLOAT,
+      defaultValue: 0,
+      allowNull: false,
+      validate: {
+        notEmpty: true,
+      },
+    },
+    correctCount: {
+      type: DataTypes.FLOAT,
+      defaultValue: 0,
+      allowNull: false,
+      validate: {
+        notEmpty: true,
+      },
+    },
+    scorePercentage: {
+      type: DataTypes.FLOAT,
+      defaultValue: 0,
       allowNull: false,
       validate: {
         notEmpty: true,
@@ -54,14 +49,6 @@ module.exports = (sequelize, DataTypes) => {
         notEmpty: true,
       },
     },
-    deleted: {
-      type: DataTypes.BOOLEAN,
-      defaultValue: false,
-      allowNull: false,
-      validate: {
-        notEmpty: true,
-      },
-    },
   });
-  return Subject;
+  return AttemptedSubject;
 };

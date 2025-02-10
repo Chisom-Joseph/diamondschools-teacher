@@ -1,5 +1,5 @@
 module.exports = (sequelize, DataTypes) => {
-  const Subject = sequelize.define("Subject", {
+  const Option = sequelize.define("Option", {
     id: {
       type: DataTypes.UUID,
       defaultValue: DataTypes.UUIDV4,
@@ -16,29 +16,7 @@ module.exports = (sequelize, DataTypes) => {
         notEmpty: true,
       },
     },
-    shortName: {
-      type: DataTypes.STRING,
-      allowNull: false,
-      validate: {
-        notEmpty: true,
-      },
-    },
-    instructions: {
-      type: DataTypes.STRING,
-      allowNull: true,
-      validate: {
-        notEmpty: true,
-      },
-    },
-    duration: {
-      type: DataTypes.FLOAT,
-      defaultValue: 30,
-      allowNull: true,
-      validate: {
-        notEmpty: true,
-      },
-    },
-    active: {
+    correct: {
       type: DataTypes.BOOLEAN,
       defaultValue: false,
       allowNull: false,
@@ -54,14 +32,6 @@ module.exports = (sequelize, DataTypes) => {
         notEmpty: true,
       },
     },
-    deleted: {
-      type: DataTypes.BOOLEAN,
-      defaultValue: false,
-      allowNull: false,
-      validate: {
-        notEmpty: true,
-      },
-    },
   });
-  return Subject;
+  return Option;
 };
