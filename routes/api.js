@@ -15,7 +15,7 @@ router.get(
   require(`../controllers/api/getSubjectAndClass`)
 );
 
-// Subject and classes
+// Subjects
 router.get("/get-subjects", require(`../controllers/api/getSubjects`));
 
 module.exports = router;
