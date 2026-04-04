@@ -1,13 +1,17 @@
 const router = require("express").Router();
 
 router.get("/", (req, res) => {
-  res.render("dashboard/dashboard.ejs");
+  res.render("dashboard/dashboard.ejs", {
+    siteSettings: req.siteSettings,
+  });
 });
 
 // All aspirants
 router.get("/all-aspirants", async (req, res) => {
   const status = req.flash("status")[0] || 200;
-  res.status(status).render("dashboard/aspirant/allAspirants.ejs");
+  res.status(status).render("dashboard/aspirant/allAspirants.ejs", {
+    siteSettings: req.siteSettings,
+  });
 });
 // Add aspirant
 router.get("/add-aspirant", async (req, res) => {
@@ -23,6 +27,7 @@ router.get("/add-aspirant", async (req, res) => {
     academicYears: await require("../utils/getAcademicYears")(),
     countries: Country.getAllCountries(),
     states: State.getAllStates(),
+    siteSettings: req.siteSettings,
   });
 });
 router.post("/add-aspirant", require("../controllers/dashboard/aspirant"));
@@ -40,6 +45,7 @@ router.get("/aspirant/:id", async (req, res) => {
     newStudentId: req.flash("newStudentId")[0] || "",
     aspirant: await require("../utils/getAspirant")(req.params.id),
     user: "",
+    siteSettings: req.siteSettings,
   });
 });
 router.post("/aspirant/:id", require("../controllers/dashboard/aspirant"));
@@ -47,7 +53,9 @@ router.post("/aspirant/:id", require("../controllers/dashboard/aspirant"));
 // All students
 router.get("/all-students", async (req, res) => {
   const status = req.flash("status")[0] || 200;
-  res.status(status).render("dashboard/student/allStudents.ejs");
+  res.status(status).render("dashboard/student/allStudents.ejs", {
+    siteSettings: req.siteSettings,
+  });
 });
 // Add student
 router.get("/add-student", async (req, res) => {
@@ -63,13 +71,16 @@ router.get("/add-student", async (req, res) => {
     academicYears: await require("../utils/getAcademicYears")(),
     countries: Country.getAllCountries(),
     states: State.getAllStates(),
+    siteSettings: req.siteSettings,
   });
 });
 router.post("/add-student", require("../controllers/dashboard/student"));
 router.get("/student/:id", async (req, res) => {
   const student = await require("../utils/getStudent")(req.params.id);
   if (Object.keys(student).length === 0) {
-    return res.status(404).render("error.ejs");
+    return res.status(404).render("error.ejs", {
+      siteSettings: req.siteSettings,
+    });
   }
 
   const status = req.flash("status")[0] || 200;
@@ -78,6 +89,7 @@ router.get("/student/:id", async (req, res) => {
     form: req.flash("form")[0] || "",
     student: await require("../utils/getStudent")(req.params.id),
     user: "",
+    siteSettings: req.siteSettings,
   });
 });
 router.post("/student/:id", require("../controllers/dashboard/student/"));
@@ -85,12 +97,16 @@ router.post("/student/:id", require("../controllers/dashboard/student/"));
 // Guardian
 router.get("/all-guardians", async (req, res) => {
   const status = req.flash("status")[0] || 200;
-  res.status(status).render("dashboard/guardian/allGuardians.ejs");
+  res.status(status).render("dashboard/guardian/allGuardians.ejs", {
+    siteSettings: req.siteSettings,
+  });
 });
 router.get("/guardian/:id", async (req, res) => {
   const guardian = await require("../utils/getGuardian")(req.params.id);
   if (Object.keys(guardian).length === 0) {
-    return res.status(404).render("error.ejs");
+    return res.status(404).render("error.ejs", {
+      siteSettings: req.siteSettings,
+    });
   }
 
   const status = req.flash("status")[0] || 200;
@@ -100,6 +116,7 @@ router.get("/guardian/:id", async (req, res) => {
     newStudentId: req.flash("newStudentId")[0] || "",
     guardian: await require("../utils/getGuardian")(req.params.id),
     user: "",
+    siteSettings: req.siteSettings,
   });
 });
 
@@ -113,6 +130,7 @@ router.get("/timetable", async (req, res) => {
     days: (await require("../utils/getDays")()) || "",
     subjects: await require("../utils/getSubjects")(),
     timetables: await require("../utils/getTimetables")(),
+    siteSettings: req.siteSettings,
   });
 });
 router.post("/timetable", require("../controllers/dashboard/timetable"));
@@ -120,7 +138,9 @@ router.post("/timetable", require("../controllers/dashboard/timetable"));
 // Subject
 router.get("/all-subjects", async (req, res) => {
   const status = req.flash("status")[0] || 200;
-  res.status(status).render("dashboard/subject/allSubjects.ejs");
+  res.status(status).render("dashboard/subject/allSubjects.ejs", {
+    siteSettings: req.siteSettings,
+  });
 });
 router.get("/subject", async (req, res) => {
   const status = req.flash("status")[0] || 200;
@@ -130,6 +150,7 @@ router.get("/subject", async (req, res) => {
     classes: (await require("../utils/getClasses")()) || "",
     formSection: req.flash("formSection")[0] || "",
     subjects: await require("../utils/getSubjects")(),
+    siteSettings: req.siteSettings,
   });
 });
 router.post("/subject", require("../controllers/dashboard/subject"));

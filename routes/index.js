@@ -3,6 +3,7 @@ const router = require("express").Router();
 const loginVerifier = require("../middlewares/loginVerifire");
 
 router.use(require("../middlewares/setCurrentPath"));
+router.use(require("../middlewares/setSiteSettings"));
 router.use("/dashboard", loginVerifier, require("./dashboard"));
 router.use("/auth", loginVerifier, require("./auth"));
 router.use("/api", loginVerifier, require("./api"));
