@@ -1,0 +1,36 @@
+<%- include("../partials/header") %>
+<main class="content">
+  <div class="container-fluid p-0">
+    <h1 class="h3 mb-3">Notifications</h1>
+
+    <div class="row">
+
+      <% if (notifications.length > 0) { %>
+      <% notifications.forEach(notification => { %>
+      <div class="col-12 col-md-6 col-lg-3">
+        <div class="card">
+
+          <div class="card-header px-4 pt-4">
+            <div class="card-actions float-end">
+            </div>
+
+            <h5 class="card-title mb-0 d-flex gap-2"><i class="align-middle" data-feather="bell"></i><%= notification.title %></h5>
+          </div>
+          <div class="card-body px-4 pt-2">
+            <p><%= notification.message %></p>
+            <% if(!notification.seen) { %><div class="badge bg-success my-2">New</div><% } %>
+          </div>
+        </div>
+      </div>
+      <% }) %>
+      <% } else { %>
+      <div class="col-12">
+        <p class="text-muted">No notifications yet.</p>
+      </div>
+      <% } %>
+
+    </div>
+
+  </div>
+</main>
+<%- include("../partials/footer") %>
