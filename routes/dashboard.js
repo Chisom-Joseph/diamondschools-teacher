@@ -166,11 +166,15 @@ router.get("/notifications", async (req, res) => {
   let notifications = [];
   let unseenBroadcasts = [];
   const teacherId = req.teacher.id;
+  const teacherCreatedAt = req.teacher.createdAt;
 
   try {
-    // 1. Get broadcast notifications targeted at all teachers
+    // 1. Get broadcast notifications targeted at all teachers created after teacher registration
     const broadcasts = await Notification.findAll({
-      where: { targetAudience: 'all-teachers' },
+      where: {
+        targetAudience: 'all-teachers',
+        createdAt: { [require("sequelize").Op.gte]: teacherCreatedAt },
+      },
       order: [['createdAt', 'DESC']],
       raw: true,
     });
@@ -189,7 +193,9 @@ router.get("/notifications", async (req, res) => {
       ],
     });
 
-    const joinedNotifications = teacherWithNotifications?.Notifications || [];
+    const joinedNotifications = (teacherWithNotifications?.Notifications || []).filter(
+      n => new Date(n.createdAt) >= new Date(teacherCreatedAt)
+    );
     const joinedIds = new Set(joinedNotifications.map(n => n.id));
 
     // 3. Merge: broadcasts not yet in joined set are unseen
