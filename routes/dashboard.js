@@ -155,4 +155,81 @@ router.get("/subject", async (req, res) => {
 });
 router.post("/subject", require("../controllers/dashboard/subject"));
 
+// Notifications
+router.get("/notifications", async (req, res) => {
+  const {
+    UserNotification,
+    Notification,
+    Teacher,
+  } = require("../models");
+
+  let notifications = [];
+  let unseenBroadcasts = [];
+  const teacherId = req.teacher.id;
+
+  try {
+    // 1. Get broadcast notifications targeted at all teachers
+    const broadcasts = await Notification.findAll({
+      where: { targetAudience: 'all-teachers' },
+      order: [['createdAt', 'DESC']],
+      raw: true,
+    });
+
+    // 2. Get notifications linked to this teacher via UserNotification
+    //    (includes: legacy, specific, and previously-viewed broadcasts)
+    const [teacherWithNotifications] = await Teacher.findAll({
+      where: { id: teacherId },
+      include: [
+        {
+          model: Notification,
+          through: {
+            attributes: ["seen"],
+          },
+        },
+      ],
+    });
+
+    const joinedNotifications = teacherWithNotifications?.Notifications || [];
+    const joinedIds = new Set(joinedNotifications.map(n => n.id));
+
+    // 3. Merge: broadcasts not yet in joined set are unseen
+    unseenBroadcasts = broadcasts.filter(b => !joinedIds.has(b.id));
+    notifications = [
+      ...unseenBroadcasts.map(b => ({ ...b, seen: false })),
+      ...joinedNotifications.map(n => ({
+        id: n.id,
+        title: n.title,
+        message: n.message,
+        targetAudience: n.targetAudience,
+        createdAt: n.createdAt,
+        seen: n.UserNotification?.seen ?? false,
+      })),
+    ].sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
+  } catch (error) {
+    console.log("Error fetching notifications:", error);
+  }
+
+  // Always render (even if fetching failed, show whatever we have)
+  res.render("dashboard/notifications", {
+    notifications,
+    siteSettings: req.siteSettings,
+  });
+
+  // Track seen status after response is sent (errors here won't affect the user)
+  try {
+    for (const b of unseenBroadcasts) {
+      await UserNotification.findOrCreate({
+        where: { TeacherId: teacherId, NotificationId: b.id },
+        defaults: { seen: true },
+      });
+    }
+    await UserNotification.update(
+      { seen: true },
+      { where: { TeacherId: teacherId, seen: false } }
+    );
+  } catch (trackingError) {
+    console.log("Error tracking notification seen status:", trackingError);
+  }
+});
+
 module.exports = router;
